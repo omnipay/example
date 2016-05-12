@@ -17,8 +17,7 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 $app['debug'] = true;
 
 // set the basurl for all templates
-$app->before(function () use ($app)
-{
+$app->before(function () use ($app) {
     // maybe a misnomer - getBaseUrl() seems to get a base *path*
     $app["twig"]->addGlobal('baseurl', $app['request']->getBaseUrl());
     // If we have an invalid IP, pop in localhost
@@ -30,8 +29,8 @@ $app->before(function () use ($app)
 });
 
 // root route
-$app->get('/', function() use ($app) {
-    $gateways = array_map(function($name) {
+$app->get('/', function () use ($app) {
+    $gateways = array_map(function ($name) {
         return Omnipay::create($name);
     }, Omnipay::find());
 
@@ -41,7 +40,7 @@ $app->get('/', function() use ($app) {
 });
 
 // gateway settings
-$app->get('/gateways/{name}', function($name) use ($app) {
+$app->get('/gateways/{name}', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -53,7 +52,7 @@ $app->get('/gateways/{name}', function($name) use ($app) {
 });
 
 // save gateway settings
-$app->post('/gateways/{name}', function($name) use ($app) {
+$app->post('/gateways/{name}', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['request']->get('gateway'));
@@ -68,7 +67,7 @@ $app->post('/gateways/{name}', function($name) use ($app) {
 });
 
 // create gateway authorize
-$app->get('/gateways/{name}/authorize', function($name) use ($app) {
+$app->get('/gateways/{name}/authorize', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -87,7 +86,7 @@ $app->get('/gateways/{name}/authorize', function($name) use ($app) {
 });
 
 // submit gateway authorize
-$app->post('/gateways/{name}/authorize', function($name) use ($app) {
+$app->post('/gateways/{name}/authorize', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -111,7 +110,7 @@ $app->post('/gateways/{name}/authorize', function($name) use ($app) {
 });
 
 // create gateway completeAuthorize
-$app->get('/gateways/{name}/completeAuthorize', function($name) use ($app) {
+$app->get('/gateways/{name}/completeAuthorize', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -126,7 +125,7 @@ $app->get('/gateways/{name}/completeAuthorize', function($name) use ($app) {
 });
 
 // create gateway capture
-$app->get('/gateways/{name}/capture', function($name) use ($app) {
+$app->get('/gateways/{name}/capture', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -141,7 +140,7 @@ $app->get('/gateways/{name}/capture', function($name) use ($app) {
 });
 
 // submit gateway capture
-$app->post('/gateways/{name}/capture', function($name) use ($app) {
+$app->post('/gateways/{name}/capture', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -162,7 +161,7 @@ $app->post('/gateways/{name}/capture', function($name) use ($app) {
 });
 
 // create gateway purchase
-$app->get('/gateways/{name}/purchase', function($name) use ($app) {
+$app->get('/gateways/{name}/purchase', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -181,7 +180,7 @@ $app->get('/gateways/{name}/purchase', function($name) use ($app) {
 });
 
 // submit gateway purchase
-$app->post('/gateways/{name}/purchase', function($name) use ($app) {
+$app->post('/gateways/{name}/purchase', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -206,7 +205,7 @@ $app->post('/gateways/{name}/purchase', function($name) use ($app) {
 
 // gateway purchase return
 // this won't work for gateways which require an internet-accessible URL (yet)
-$app->match('/gateways/{name}/completePurchase', function($name) use ($app) {
+$app->match('/gateways/{name}/completePurchase', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -224,7 +223,7 @@ $app->match('/gateways/{name}/completePurchase', function($name) use ($app) {
 });
 
 // create gateway create Credit Card
-$app->get('/gateways/{name}/create-card', function($name) use ($app) {
+$app->get('/gateways/{name}/create-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -241,7 +240,7 @@ $app->get('/gateways/{name}/create-card', function($name) use ($app) {
 });
 
 // submit gateway create Credit Card
-$app->post('/gateways/{name}/create-card', function($name) use ($app) {
+$app->post('/gateways/{name}/create-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -265,7 +264,7 @@ $app->post('/gateways/{name}/create-card', function($name) use ($app) {
 });
 
 // create gateway update Credit Card
-$app->get('/gateways/{name}/update-card', function($name) use ($app) {
+$app->get('/gateways/{name}/update-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -282,7 +281,7 @@ $app->get('/gateways/{name}/update-card', function($name) use ($app) {
 });
 
 // submit gateway update Credit Card
-$app->post('/gateways/{name}/update-card', function($name) use ($app) {
+$app->post('/gateways/{name}/update-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -306,7 +305,7 @@ $app->post('/gateways/{name}/update-card', function($name) use ($app) {
 });
 
 // create gateway delete Credit Card
-$app->get('/gateways/{name}/delete-card', function($name) use ($app) {
+$app->get('/gateways/{name}/delete-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -321,7 +320,7 @@ $app->get('/gateways/{name}/delete-card', function($name) use ($app) {
 });
 
 // submit gateway delete Credit Card
-$app->post('/gateways/{name}/delete-card', function($name) use ($app) {
+$app->post('/gateways/{name}/delete-card', function ($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
