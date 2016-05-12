@@ -21,6 +21,12 @@ $app->before(function () use ($app)
 {
     // maybe a misnomer - getBaseUrl() seems to get a base *path*
     $app["twig"]->addGlobal('baseurl', $app['request']->getBaseUrl());
+    // If we have an invalid IP, pop in localhost
+    $app['clientIp'] = filter_var(
+        $app['request']->getClientIp(),
+        FILTER_VALIDATE_IP,
+        FILTER_FLAG_IPV4
+    ) ?: '127.0.0.1';
 });
 
 // root route
@@ -95,7 +101,7 @@ $app->post('/gateways/{name}/authorize', function($name) use ($app) {
     $app['session']->set($sessionVar.'.card', $card);
 
     $params['card'] = $card;
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->authorize($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -146,7 +152,7 @@ $app->post('/gateways/{name}/capture', function($name) use ($app) {
     // save POST data into session
     $app['session']->set($sessionVar.'.capture', $params);
 
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->capture($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -189,7 +195,7 @@ $app->post('/gateways/{name}/purchase', function($name) use ($app) {
     $app['session']->set($sessionVar.'.card', $card);
 
     $params['card'] = $card;
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->purchase($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -208,7 +214,7 @@ $app->match('/gateways/{name}/completePurchase', function($name) use ($app) {
     // load request data from session
     $params = $app['session']->get($sessionVar.'.purchase', array());
 
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->completePurchase($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -249,7 +255,7 @@ $app->post('/gateways/{name}/create-card', function($name) use ($app) {
     $app['session']->set($sessionVar.'.card', $card);
 
     $params['card'] = $card;
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->createCard($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -290,7 +296,7 @@ $app->post('/gateways/{name}/update-card', function($name) use ($app) {
     $app['session']->set($sessionVar.'.card', $card);
 
     $params['card'] = $card;
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->updateCard($params)->send();
 
     return $app['twig']->render('response.twig', array(
@@ -326,7 +332,7 @@ $app->post('/gateways/{name}/delete-card', function($name) use ($app) {
     // save POST data into session
     $app['session']->set($sessionVar.'.delete', $params);
 
-    $params['clientIp'] = $app['request']->getClientIp();
+    $params['clientIp'] = $app['clientIp'];
     $response = $gateway->deleteCard($params)->send();
 
     return $app['twig']->render('response.twig', array(
