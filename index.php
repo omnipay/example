@@ -105,7 +105,7 @@ $app->post('/gateways/{name}/authorize', function($name) use ($app) {
 });
 
 // create gateway completeAuthorize
-$app->get('/gateways/{name}/completeAuthorize', function($name) use ($app) {
+$app->match('/gateways/{name}/completeAuthorize', function($name) use ($app) {
     $gateway = Omnipay::create($name);
     $sessionVar = 'omnipay.'.$gateway->getShortName();
     $gateway->initialize((array) $app['session']->get($sessionVar));
@@ -117,7 +117,7 @@ $app->get('/gateways/{name}/completeAuthorize', function($name) use ($app) {
         'gateway' => $gateway,
         'response' => $response,
     ));
-});
+})->method('get|post');
 
 // create gateway capture
 $app->get('/gateways/{name}/capture', function($name) use ($app) {
